@@ -163,6 +163,11 @@ input[type=range]{width:100%;accent-color:var(--accent);height:28px}
 .diff th{font-size:var(--text-xs);color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
 .diff td:first-child{color:var(--muted)}
 .tabs{display:flex;gap:.5rem;margin-bottom:1rem;flex-wrap:wrap}
+.t{font-size:inherit!important;color:inherit!important;display:inline!important;font-family:inherit!important}
+.navr{display:flex;align-items:center;gap:.6rem}
+.unit{display:flex;border:1px solid var(--line);border-radius:999px;padding:3px;background:var(--night-2)}
+.unit button{padding:.45rem .7rem;border-radius:999px;font-weight:700;font-size:var(--text-xs);color:var(--muted);min-width:40px;min-height:36px}
+.unit button[aria-pressed="true"]{background:var(--accent);color:#0b1020;transition:background .6s}
 /* modal */
 dialog{margin:auto;border:1px solid var(--line);border-radius:18px;background:var(--night-2);color:var(--ink);padding:2rem;max-width:420px;width:calc(100% - 2rem)}
 dialog::backdrop{background:#000a;backdrop-filter:blur(4px)}
@@ -179,7 +184,7 @@ footer{padding:2.5rem 0;border-top:1px solid var(--line);font-size:var(--text-xs
 <nav><div class="wrap">
   <div class="brand"><span class="brand-dot" aria-hidden="true"></span>FlipSleep</div>
   <div class="navlinks"><a href="#research">Research</a><a href="#sim">Night simulator</a><a href="#layers">How it works</a><a href="#patents">Patents</a><a href="#order">Pre-order</a></div>
-  <button class="btn" data-goto="order">Reserve</button>
+  <div class="navr"><div class="unit" role="group" aria-label="Temperature units"><button data-u="f" aria-pressed="true">°F</button><button data-u="c" aria-pressed="false">°C</button></div><button class="btn" data-goto="order">Reserve</button></div>
 </div></nav>
 
 <header class="hero"><div class="wrap hero-grid">
@@ -192,8 +197,8 @@ footer{padding:2.5rem 0;border-top:1px solid var(--line);font-size:var(--text-xs
       <button class="btn ghost" data-goto="layers">See the layers</button>
     </div>
     <div class="stats">
-      <div><b>−2 to −4°C</b><span>cool side, est.</span></div>
-      <div><b>+3 to +6°C</b><span>warm side, est.</span></div>
+      <div><b><span class="t" data-k="d" data-v="-2,-4" data-j=" to " data-dp="0"></span></b><span>cool side, est.</span></div>
+      <div><b><span class="t" data-k="d" data-v="3,6" data-j=" to " data-s="1" data-dp="0"></span></b><span>warm side, est.</span></div>
       <div><b>$5–8</b><span>target retail</span></div>
     </div>
   </div>
@@ -253,7 +258,7 @@ footer{padding:2.5rem 0;border-top:1px solid var(--line);font-size:var(--text-xs
   <div class="sim">
     <div class="card">
       <div class="field">
-        <label for="temp">Bedroom temperature <output id="tempOut">30°C</output></label>
+        <label for="temp">Bedroom temperature <output id="tempOut"></output></label>
         <input type="range" id="temp" min="2" max="40" value="30">
       </div>
       <div class="field">
@@ -275,8 +280,8 @@ footer{padding:2.5rem 0;border-top:1px solid var(--line);font-size:var(--text-xs
       <div class="field" style="margin-bottom:0">
         <label for="unit">Units</label>
         <div class="seg" data-group="unit">
-          <button data-v="c" aria-pressed="true">°C</button>
-          <button data-v="f" aria-pressed="false">°F</button>
+          <button data-v="f" aria-pressed="true">°F</button>
+          <button data-v="c" aria-pressed="false">°C</button>
         </div>
       </div>
     </div>
@@ -287,11 +292,11 @@ footer{padding:2.5rem 0;border-top:1px solid var(--line);font-size:var(--text-xs
       </div>
       <div class="thermo"><canvas id="thermo"></canvas></div>
       <div class="compare">
-        <div><span>Without sheet</span><b id="cNone">30°C</b><span id="zNone"></span></div>
-        <div class="hl"><span>With FlipSleep</span><b id="cFlip">27°C</b><span id="zFlip"></span></div>
-        <div><span>Wrong side</span><b id="cWrong">33°C</b><span id="zWrong"></span></div>
+        <div><span>Without sheet</span><b id="cNone"></b><span id="zNone"></span></div>
+        <div class="hl"><span>With FlipSleep</span><b id="cFlip"></b><span id="zFlip"></span></div>
+        <div><span>Wrong side</span><b id="cWrong"></b><span id="zWrong"></span></div>
       </div>
-      <p class="hint">"Feels like" is the estimated temperature your skin experiences under the sheet. The comfort band for sleep is roughly 18–26°C.</p>
+      <p class="hint">"Feels like" is the estimated temperature your skin experiences under the sheet. The comfort band for sleep is roughly <span class="t" data-k="a" data-v="18,26" data-j="–" data-dp="0"></span>.</p>
     </div>
   </div>
 </div></section>
@@ -313,10 +318,10 @@ footer{padding:2.5rem 0;border-top:1px solid var(--line);font-size:var(--text-xs
     <div class="card">
       <div class="eyebrow">Key findings</div>
       <div class="facts" style="margin-top:1rem">
-        <div><b>6.5°C</b><span>skin temperature swing from flipping the same textile</span></div>
-        <div><b>13.9–24.3°C</b><span>comfort zone of the room, 10.4°C wide</span></div>
-        <div><b>14.7°C</b><span>predicted comfort-zone expansion with a larger emissivity contrast</span></div>
-        <div><b>32–36°C</b><span>skin held in range through a 9°C swing in room temperature</span></div>
+        <div><b><span class="t" data-k="d" data-v="6.5"></span></b><span>skin temperature swing from flipping the same textile</span></div>
+        <div><b><span class="t" data-k="a" data-v="13.9,24.3" data-j="–"></span></b><span>comfort zone of the room, <span class="t" data-k="d" data-v="10.4"></span> wide</span></div>
+        <div><b><span class="t" data-k="d" data-v="14.7"></span></b><span>predicted comfort-zone expansion with a larger emissivity contrast</span></div>
+        <div><b><span class="t" data-k="a" data-v="32,36" data-j="–" data-dp="0"></span></b><span>skin held in range through a <span class="t" data-k="d" data-v="9" data-dp="0"></span> swing in room temperature</span></div>
       </div>
       <p class="cite">How it works: a carbon/copper bilayer emitter sits inside infrared-transparent nanoporous polyethylene (nanoPE), the same base material as kitchen wrap. With the carbon side out, body heat radiates away. With the copper side out, radiation drops and heat stays in (<a href="https://engineering.stanford.edu/news/new-textile-can-keep-people-comfortable-whatever-weather" target="_blank" rel="noopener">Stanford Engineering</a>). The emitter is also set at different distances from the skin on each side, which strengthens the effect (<a href="https://www.osti.gov/servlets/purl/1418218" target="_blank" rel="noopener">OSTI</a>).</p>
     </div>
@@ -334,7 +339,7 @@ footer{padding:2.5rem 0;border-top:1px solid var(--line);font-size:var(--text-xs
         <tr><td>Status</td><td>Research prototype; Stanford holds patents (see below)</td><td>Concept, which needs a design that avoids those patents or a license</td></tr>
       </tbody>
     </table></div>
-    <p class="cite">Related follow-up from the same lab: a bifunctional asymmetric fabric gave a 4.6°C cooling/warming difference using surface roughness plus emissivity (<a href="https://www.engineering.org.cn/engi/EN/PDF/10.1016/j.eng.2021.04.016" target="_blank" rel="noopener">Peng et al., Engineering 2021</a>).</p>
+    <p class="cite">Related follow-up from the same lab: a bifunctional asymmetric fabric gave a <span class="t" data-k="d" data-v="4.6"></span> cooling/warming difference using surface roughness plus emissivity (<a href="https://www.engineering.org.cn/engi/EN/PDF/10.1016/j.eng.2021.04.016" target="_blank" rel="noopener">Peng et al., Engineering 2021</a>).</p>
   </div>
 </div></section>
 
@@ -421,7 +426,7 @@ footer{padding:2.5rem 0;border-top:1px solid var(--line);font-size:var(--text-xs
 <script>
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 const root=document.documentElement;
-const state={mode:'cool',auto:true,temp:30,hum:'normal',bed:'none',unit:'c',size:'single',price:6,buyer:'home',qty:1};
+const state={mode:'cool',auto:true,temp:30,hum:'normal',bed:'none',unit:'f',size:'single',price:6,buyer:'home',qty:1};
 
 function setMode(m,fromSim){
   state.mode=m;root.dataset.mode=m;
@@ -442,13 +447,26 @@ $$('[data-group]').forEach(g=>g.addEventListener('click',e=>{
   g.querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',x===b));
   const k=g.dataset.group;state[k]=b.dataset.v;
   if(k==='size')state.price=+b.dataset.p;
+  if(k==='unit'){renderUnits()}
   if(k==='buyer'){state.qty=state.buyer==='ngo'?Math.max(50,state.qty):1}
   if(['hum','bed','unit'].includes(k)){state.auto=true}
   sim();order();
 }));
 
 // simulator
-const fmt=c=>state.unit==='c'?`${Math.round(c)}°C`:`${Math.round(c*9/5+32)}°F`;
+const tc=(v,k,dp)=>{const f=state.unit==='f';let x=f?(k==='a'?v*9/5+32:v*9/5):v;const d=dp??(Number.isInteger(+v)&&!f?0:1);return (x<0?'−':'')+Math.abs(x).toFixed(d).replace(/\.0$/,'')+(f?'°F':'°C')};
+const tpl=str=>str.replace(/\{([ad]):([\d.]+)\}/g,(m,k,v)=>tc(+v,k));
+function renderUnits(){
+  $$('.t').forEach(el=>{const vs=el.dataset.v.split(',').map(Number),k=el.dataset.k,dp=el.dataset.dp!=null?+el.dataset.dp:undefined,u=state.unit==='f'?'°F':'°C';
+    const parts=vs.map(v=>{let s=tc(v,k,dp);if(el.dataset.s&&v>0)s='+'+s;return s});
+    el.textContent=parts.length>1?parts.map(p=>p.replace(/°[CF]$/,'')).join(el.dataset.j)+u:parts[0]});
+  $$('.unit button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.u===state.unit));
+  $$('[data-group="unit"] button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.v===state.unit));
+  if($('#bars'))$('#barNote').textContent=tpl(BARS[barSel].t),$$('#bars .bar b').forEach((b,i)=>b.textContent=tc(BARS[i].v,'a',1));
+}
+function setUnit(u){state.unit=u;renderUnits();sim()}
+$$('.unit button').forEach(b=>b.onclick=()=>setUnit(b.dataset.u));
+const fmt=c=>tc(c,'a',0);
 function zone(c){return c<16?['bad','Too cold']:c<18?['warn','Chilly']:c<=26?['ok','Comfortable']:c<=29?['warn','Warm']:['bad','Too hot']}
 function sim(){
   const t=state.temp;
@@ -560,15 +578,15 @@ function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('show');se
 
 // research bars
 const BARS=[
- {n:'Bare skin',v:31.0,c:'#9aa3bd',t:'Bare skin with no covering measured 31.0°C. This is the baseline.'},
- {n:'Dual-mode, cool side',v:33.8,c:'#7fd3ff',t:'Carbon (high-emissivity) side out: 33.8°C. That is 3.1°C cooler than the sweatshirt, because body heat radiates through the nanoPE.'},
- {n:'Sweatshirt',v:36.9,c:'#c9b8a8',t:'A commercial sweatshirt raised skin temperature to 36.9°C by trapping infrared heat.'},
- {n:'Dual-mode, warm side',v:40.3,c:'#ffb15c',t:'Copper (low-emissivity) side out: 40.3°C, which is 6.5°C warmer than the cool side with the same piece of fabric.'}
+ {n:'Bare skin',v:31.0,c:'#9aa3bd',t:'Bare skin with no covering measured {a:31.0}. This is the baseline.'},
+ {n:'Dual-mode, cool side',v:33.8,c:'#7fd3ff',t:'Carbon (high-emissivity) side out: {a:33.8}. That is {d:3.1} cooler than the sweatshirt, because body heat radiates through the nanoPE.'},
+ {n:'Sweatshirt',v:36.9,c:'#c9b8a8',t:'A commercial sweatshirt raised skin temperature to {a:36.9} by trapping infrared heat.'},
+ {n:'Dual-mode, warm side',v:40.3,c:'#ffb15c',t:'Copper (low-emissivity) side out: {a:40.3}, which is {d:6.5} warmer than the cool side with the same piece of fabric.'}
 ];
 let barSel=1;
 function renderBars(animate){
-  $('#bars').innerHTML=BARS.map((b,i)=>`<div class="bar" role="button" tabindex="0" data-i="${i}" aria-pressed="${i===barSel}"><span>${b.n}</span><div class="track"><div class="fill" style="background:${b.c};width:${animate?0:((b.v-28)/(42-28)*100)}%"></div></div><b>${b.v.toFixed(1)}°</b></div>`).join('');
-  $('#barNote').textContent=BARS[barSel].t;
+  $('#bars').innerHTML=BARS.map((b,i)=>`<div class="bar" role="button" tabindex="0" data-i="${i}" aria-pressed="${i===barSel}"><span>${b.n}</span><div class="track"><div class="fill" style="background:${b.c};width:${animate?0:((b.v-28)/(42-28)*100)}%"></div></div><b>${tc(b.v,'a',1)}</b></div>`).join('');
+  $('#barNote').textContent=tpl(BARS[barSel].t);
   if(animate)requestAnimationFrame(()=>requestAnimationFrame(()=>$$('#bars .fill').forEach((f,i)=>f.style.width=((BARS[i].v-28)/(42-28)*100)+'%')));
 }
 $('#bars').addEventListener('click',e=>{const b=e.target.closest('.bar');if(b){barSel=+b.dataset.i;renderBars(false)}});
@@ -576,7 +594,7 @@ $('#bars').addEventListener('keydown',e=>{const b=e.target.closest('.bar');if(b&
 renderBars(false);
 const io=new IntersectionObserver(es=>{es.forEach(en=>{if(en.isIntersecting){renderBars(true);io.disconnect()}})},{threshold:.3});
 io.observe($('#bars'));
-sim();order();
+renderUnits();sim();order();
 </script>
 </body>
 </html>
