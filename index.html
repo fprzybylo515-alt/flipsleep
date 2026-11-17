@@ -1,0 +1,582 @@
+<!doctype html>
+<html lang="en" data-mode="cool">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FlipSleep — one sheet, two climates</title>
+<link rel="preconnect" href="https://api.fontshare.com">
+<link href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@500,700,800&f[]=satoshi@400,500,700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --text-xs:clamp(.75rem,.7rem + .25vw,.875rem);
+  --text-sm:clamp(.875rem,.8rem + .35vw,1rem);
+  --text-base:clamp(1rem,.95rem + .25vw,1.125rem);
+  --text-lg:clamp(1.125rem,1rem + .75vw,1.5rem);
+  --text-xl:clamp(1.5rem,1.2rem + 1.25vw,2.25rem);
+  --text-2xl:clamp(2.25rem,1.2rem + 3.5vw,4.25rem);
+  --night:#0d1220; --night-2:#141b2e; --night-3:#1c2540; --line:#2a3454;
+  --ink:#eef1f8; --muted:#9aa3bd;
+  --cool:#7fd3ff; --cool-deep:#2b8fd6; --warm:#ffb15c; --warm-deep:#e0662a;
+  --accent:var(--cool); --accent-deep:var(--cool-deep);
+  --r:14px;
+  --font-d:'Cabinet Grotesk',system-ui,sans-serif; --font-b:'Satoshi',system-ui,sans-serif;
+}
+html[data-mode="warm"]{--accent:var(--warm);--accent-deep:var(--warm-deep)}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--font-b);font-size:var(--text-base);line-height:1.55;color:var(--ink);background:var(--night);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:-1;background:radial-gradient(60rem 40rem at 80% -10%,color-mix(in oklab,var(--accent) 18%,transparent),transparent 60%),radial-gradient(40rem 30rem at -10% 60%,color-mix(in oklab,var(--accent-deep) 12%,transparent),transparent 60%);transition:background .8s}
+h1,h2,h3{font-family:var(--font-d);line-height:1.05;letter-spacing:-.02em}
+a{color:inherit}
+button{font:inherit;cursor:pointer;border:0;background:none;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:6px}
+.wrap{max-width:1180px;margin:0 auto;padding:0 clamp(1rem,4vw,2.5rem)}
+.eyebrow{font-size:var(--text-xs);text-transform:uppercase;letter-spacing:.14em;color:var(--accent);font-weight:700;transition:color .6s}
+.muted{color:var(--muted)}
+
+/* nav */
+nav{position:sticky;top:0;z-index:20;backdrop-filter:blur(12px);background:color-mix(in oklab,var(--night) 75%,transparent);border-bottom:1px solid var(--line)}
+nav .wrap{display:flex;align-items:center;justify-content:space-between;height:60px;gap:1rem}
+.brand{font-family:var(--font-d);font-weight:800;font-size:var(--text-lg);display:flex;align-items:center;gap:.5rem}
+.brand-dot{width:22px;height:22px;border-radius:50%;background:linear-gradient(90deg,var(--cool) 50%,var(--warm) 50%);transition:transform .8s}
+html[data-mode="warm"] .brand-dot{transform:rotate(180deg)}
+.navlinks{display:flex;gap:1.5rem;font-size:var(--text-sm)}
+.navlinks a{text-decoration:none;color:var(--muted)}
+.navlinks a:hover{color:var(--ink)}
+.btn{display:inline-flex;align-items:center;gap:.5rem;padding:.75rem 1.25rem;border-radius:999px;font-weight:700;font-size:var(--text-sm);background:var(--accent);color:#0b1020;transition:background .6s,transform .15s}
+.btn:hover{transform:translateY(-1px)}
+.btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+@media(max-width:760px){.navlinks{display:none}}
+
+/* hero */
+.hero{padding:clamp(2.5rem,7vw,6rem) 0 3rem}
+.hero-grid{display:grid;grid-template-columns:1.05fr 1fr;gap:clamp(2rem,5vw,4rem);align-items:center}
+.hero h1{font-size:var(--text-2xl);font-weight:800;margin:.75rem 0 1.25rem}
+.hero h1 em{font-style:normal;color:var(--accent);transition:color .6s}
+.hero p.lead{font-size:var(--text-lg);color:var(--muted);max-width:34ch;line-height:1.45}
+.hero-cta{display:flex;gap:.75rem;margin-top:2rem;flex-wrap:wrap}
+.stats{display:flex;gap:2rem;margin-top:2.5rem;flex-wrap:wrap}
+.stats b{display:block;font-family:var(--font-d);font-size:var(--text-xl)}
+.stats span{font-size:var(--text-xs);color:var(--muted)}
+@media(max-width:860px){.hero-grid{grid-template-columns:1fr}}
+
+/* sheet flip */
+.stage{perspective:1400px;display:flex;flex-direction:column;align-items:center;gap:1.25rem}
+.sheet{width:min(100%,440px);aspect-ratio:4/3.2;position:relative;transform-style:preserve-3d;transition:transform 1.1s cubic-bezier(.6,-0.15,.25,1.2);cursor:pointer}
+html[data-mode="warm"] .sheet{transform:rotateY(180deg)}
+.face{position:absolute;inset:0;border-radius:22px;backface-visibility:hidden;-webkit-backface-visibility:hidden;overflow:hidden;box-shadow:0 30px 80px -30px #000}
+.face.back{transform:rotateY(180deg)}
+.face svg{width:100%;height:100%;display:block}
+.face-label{position:absolute;left:1rem;bottom:1rem;background:#0b1020cc;padding:.4rem .75rem;border-radius:999px;font-size:var(--text-xs);font-weight:700;letter-spacing:.06em}
+.switch{display:flex;background:var(--night-2);border:1px solid var(--line);border-radius:999px;padding:4px;position:relative}
+.switch button{position:relative;z-index:1;padding:.6rem 1.25rem;font-weight:700;font-size:var(--text-sm);border-radius:999px;color:var(--muted);transition:color .4s;min-width:120px}
+.switch button[aria-pressed="true"]{color:#0b1020}
+.switch .pill{position:absolute;top:4px;bottom:4px;left:4px;width:calc(50% - 4px);border-radius:999px;background:var(--accent);transition:transform .5s cubic-bezier(.6,0,.2,1),background .6s}
+html[data-mode="warm"] .switch .pill{transform:translateX(100%)}
+.hint{font-size:var(--text-xs);color:var(--muted)}
+
+/* sections */
+section{scroll-margin-top:60px;padding:clamp(3.5rem,8vw,6.5rem) 0;border-top:1px solid var(--line)}
+.sec-head{max-width:640px;margin-bottom:2.5rem}
+.sec-head h2{font-size:var(--text-xl);font-weight:800;margin:.5rem 0 .75rem}
+.card{background:var(--night-2);border:1px solid var(--line);border-radius:var(--r);padding:clamp(1.25rem,3vw,2rem)}
+
+/* simulator */
+.sim{display:grid;grid-template-columns:1fr 1.1fr;gap:1.5rem}
+@media(max-width:860px){.sim{grid-template-columns:1fr}}
+.field{margin-bottom:1.5rem}
+.field label{display:flex;justify-content:space-between;font-size:var(--text-sm);font-weight:700;margin-bottom:.6rem}
+.field label output{font-family:var(--font-d);font-size:var(--text-lg);color:var(--accent);transition:color .6s}
+input[type=range]{width:100%;accent-color:var(--accent);height:28px}
+.seg{display:flex;flex-wrap:wrap;gap:.5rem}
+.seg button{padding:.5rem .9rem;border-radius:999px;border:1px solid var(--line);font-size:var(--text-sm);color:var(--muted)}
+.seg button[aria-pressed="true"]{border-color:var(--accent);color:var(--ink);background:color-mix(in oklab,var(--accent) 14%,transparent)}
+.readout{display:flex;flex-direction:column;gap:1.25rem}
+.verdict{display:flex;align-items:center;gap:1rem}
+.verdict .icon{width:56px;height:56px;border-radius:16px;display:grid;place-items:center;background:color-mix(in oklab,var(--accent) 18%,transparent);flex-shrink:0;transition:background .6s}
+.verdict h3{font-size:var(--text-lg)}
+.thermo{position:relative;height:120px;border-radius:12px;background:var(--night-3);overflow:hidden}
+.thermo canvas{width:100%;height:100%;display:block}
+.compare{display:grid;grid-template-columns:repeat(3,1fr);gap:.75rem}
+.compare div{background:var(--night-3);border-radius:12px;padding:.9rem}
+.compare b{display:block;font-family:var(--font-d);font-size:var(--text-lg)}
+.compare span{font-size:var(--text-xs);color:var(--muted)}
+.compare .hl{outline:1px solid var(--accent)}
+.zone{font-size:var(--text-xs);font-weight:700;padding:.25rem .55rem;white-space:nowrap;margin-top:.35rem;border-radius:999px;display:inline-block}
+.zone.ok{background:#2fbf7133;color:#7ee2a8}.zone.warn{background:#ffb15c33;color:#ffc98a}.zone.bad{background:#ff5c5c33;color:#ff9a9a}
+
+/* layers */
+.layers{display:grid;grid-template-columns:1.1fr 1fr;gap:2rem;align-items:center}
+@media(max-width:860px){.layers{grid-template-columns:1fr}}
+.stack{position:relative;height:340px;perspective:900px}
+.layer{position:absolute;left:8%;right:8%;height:70px;border-radius:12px;transform:rotateX(58deg) rotateZ(-8deg);transition:transform .45s,top .45s,box-shadow .3s;cursor:pointer;border:1px solid #ffffff22;display:flex;align-items:center;padding:0 1.25rem;font-weight:700;font-size:var(--text-sm)}
+.layer span{transform:rotateZ(8deg) rotateX(-20deg)}
+.stack:hover .layer,.stack.open .layer{}
+.layer.active{box-shadow:0 0 0 2px var(--accent),0 20px 40px -10px #000;}
+.layer-info h3{font-size:var(--text-lg);margin-bottom:.5rem}
+.layer-list{list-style:none;display:flex;flex-direction:column;gap:.5rem;margin-top:1.25rem}
+.layer-list button{width:100%;text-align:left;padding:.75rem 1rem;border-radius:10px;border:1px solid var(--line);font-size:var(--text-sm);display:flex;justify-content:space-between}
+.layer-list button[aria-pressed="true"]{border-color:var(--accent);background:color-mix(in oklab,var(--accent) 12%,transparent)}
+
+/* order */
+.order{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem}
+@media(max-width:860px){.order{grid-template-columns:1fr}}
+.opt{display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem}
+.opt button{padding:.9rem .5rem;border-radius:12px;border:1px solid var(--line);text-align:center;font-size:var(--text-sm)}
+.opt button small{display:block;color:var(--muted);font-size:var(--text-xs)}
+.opt button[aria-pressed="true"]{border-color:var(--accent);background:color-mix(in oklab,var(--accent) 12%,transparent)}
+.qty{display:flex;align-items:center;gap:1rem}
+.qty button{width:44px;height:44px;border-radius:12px;border:1px solid var(--line);font-size:1.25rem}
+.qty output{font-family:var(--font-d);font-size:var(--text-xl);min-width:3ch;text-align:center}
+.total{display:flex;justify-content:space-between;align-items:baseline;padding:1rem 0;border-top:1px solid var(--line);margin-top:1rem}
+.total b{font-family:var(--font-d);font-size:var(--text-xl)}
+.tag{font-size:var(--text-xs);color:#7ee2a8;font-weight:700}
+.impact{display:flex;flex-direction:column;gap:1rem}
+.impact .big{font-family:var(--font-d);font-size:var(--text-2xl);font-weight:800;color:var(--accent);line-height:1;transition:color .6s}
+
+/* patents */
+.pat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
+@media(max-width:860px){.pat-grid{grid-template-columns:1fr}}
+.pat h3{font-size:var(--text-base);margin:.5rem 0}
+.pat p{font-size:var(--text-sm);color:var(--muted)}
+.risk{font-size:var(--text-xs);font-weight:700;padding:.25rem .6rem;border-radius:999px;display:inline-block}
+
+
+/* research */
+.res-grid{display:grid;grid-template-columns:1.15fr 1fr;gap:1.5rem}
+@media(max-width:860px){.res-grid{grid-template-columns:1fr}}
+.bars{display:flex;flex-direction:column;gap:.9rem;margin-top:1rem}
+.bar{display:grid;grid-template-columns:9.5rem 1fr 3.5rem;align-items:center;gap:.75rem;font-size:var(--text-sm);cursor:pointer;border-radius:8px;padding:.25rem}
+.bar .track{height:14px;border-radius:999px;background:var(--night-3);overflow:hidden}
+.bar .fill{height:100%;border-radius:999px;width:0;transition:width 1s cubic-bezier(.3,0,.2,1)}
+.bar b{font-family:var(--font-d);text-align:right}
+.bar[aria-pressed="true"]{background:color-mix(in oklab,var(--accent) 10%,transparent)}
+@media(max-width:480px){.bar{grid-template-columns:6.5rem 1fr 3rem}}
+.barnote{margin-top:1.25rem;font-size:var(--text-sm);color:var(--muted);min-height:3em}
+.facts{display:grid;grid-template-columns:1fr 1fr;gap:.75rem}
+.facts div{background:var(--night-3);border-radius:12px;padding:1rem}
+.facts b{display:block;font-family:var(--font-d);font-size:var(--text-xl);color:var(--accent);transition:color .6s;line-height:1.1}
+.facts span{font-size:var(--text-xs);color:var(--muted)}
+.cite{font-size:var(--text-xs);color:var(--muted);margin-top:1rem;line-height:1.5}
+.diff{width:100%;border-collapse:collapse;font-size:var(--text-sm);margin-top:.5rem}
+.diff th,.diff td{text-align:left;padding:.7rem .5rem;border-bottom:1px solid var(--line);vertical-align:top}
+.diff th{font-size:var(--text-xs);color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+.diff td:first-child{color:var(--muted)}
+.tabs{display:flex;gap:.5rem;margin-bottom:1rem;flex-wrap:wrap}
+/* modal */
+dialog{margin:auto;border:1px solid var(--line);border-radius:18px;background:var(--night-2);color:var(--ink);padding:2rem;max-width:420px;width:calc(100% - 2rem)}
+dialog::backdrop{background:#000a;backdrop-filter:blur(4px)}
+dialog h3{font-size:var(--text-lg);margin-bottom:.5rem}
+dialog input{width:100%;padding:.8rem 1rem;border-radius:10px;border:1px solid var(--line);background:var(--night-3);color:var(--ink);font:inherit;margin:1rem 0}
+.err{color:#ff9a9a;font-size:var(--text-xs);min-height:1.2em;margin-top:-.5rem;margin-bottom:.75rem}
+footer{padding:2.5rem 0;border-top:1px solid var(--line);font-size:var(--text-xs);color:var(--muted)}
+.toast{position:fixed;left:50%;bottom:1.5rem;transform:translate(-50%,150%);opacity:0;visibility:hidden;background:var(--ink);color:#0b1020;padding:.75rem 1.25rem;border-radius:999px;font-weight:700;font-size:var(--text-sm);transition:transform .4s;z-index:50}
+.toast.show{transform:translate(-50%,0);opacity:1;visibility:visible}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<nav><div class="wrap">
+  <div class="brand"><span class="brand-dot" aria-hidden="true"></span>FlipSleep</div>
+  <div class="navlinks"><a href="#research">Research</a><a href="#sim">Night simulator</a><a href="#layers">How it works</a><a href="#patents">Patents</a><a href="#order">Pre-order</a></div>
+  <button class="btn" data-goto="order">Reserve</button>
+</div></nav>
+
+<header class="hero"><div class="wrap hero-grid">
+  <div>
+    <div class="eyebrow">Concept prototype · no power required</div>
+    <h1>One sheet.<br>Two climates.<br><em id="heroWord">Flip to cool.</em></h1>
+    <p class="lead">A thin, washable sleep sheet that sheds your body heat on hot nights and holds it in on cold ones. You turn it over to switch.</p>
+    <div class="hero-cta">
+      <button class="btn" data-goto="sim">Try the night simulator</button>
+      <button class="btn ghost" data-goto="layers">See the layers</button>
+    </div>
+    <div class="stats">
+      <div><b>−2 to −4°C</b><span>cool side, est.</span></div>
+      <div><b>+3 to +6°C</b><span>warm side, est.</span></div>
+      <div><b>$5–8</b><span>target retail</span></div>
+    </div>
+  </div>
+  <div class="stage">
+    <div class="sheet" id="sheet" role="button" tabindex="0" aria-label="Flip the sheet">
+      <div class="face front">
+        <svg viewBox="0 0 400 320" aria-hidden="true">
+          <defs>
+            <linearGradient id="gc" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1b2a44"/><stop offset="1" stop-color="#0f1a2e"/></linearGradient>
+            <pattern id="weave" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M0 5h10M5 0v10" stroke="#ffffff10" stroke-width="1"/></pattern>
+          </defs>
+          <rect width="400" height="320" fill="url(#gc)"/><rect width="400" height="320" fill="url(#weave)"/>
+          <g fill="none" stroke="#7fd3ff" stroke-width="2.5" stroke-linecap="round" opacity=".9">
+            <path class="wv" d="M80 230 q10 -20 0 -40 q-10 -20 0 -40 q10 -20 0 -40"/>
+            <path class="wv" d="M160 240 q10 -20 0 -40 q-10 -20 0 -40 q10 -20 0 -40 q-10 -20 0 -40"/>
+            <path class="wv" d="M240 230 q10 -20 0 -40 q-10 -20 0 -40 q10 -20 0 -40"/>
+            <path class="wv" d="M320 240 q10 -20 0 -40 q-10 -20 0 -40 q10 -20 0 -40 q-10 -20 0 -40"/>
+          </g>
+          <text x="24" y="44" fill="#7fd3ff" font-family="Cabinet Grotesk, system-ui, sans-serif" font-weight="800" font-size="22">COOL SIDE</text>
+          <text x="24" y="66" fill="#9aa3bd" font-family="Satoshi, system-ui, sans-serif" font-size="13">High-emissivity carbon faces out · heat radiates away</text>
+        </svg>
+        <span class="face-label" style="color:#7fd3ff">❄ Hot-night mode</span>
+      </div>
+      <div class="face back">
+        <svg viewBox="0 0 400 320" aria-hidden="true">
+          <defs>
+            <linearGradient id="gw" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3a2a22"/><stop offset=".5" stop-color="#5a4334"/><stop offset="1" stop-color="#2a1d18"/></linearGradient>
+            <pattern id="dots" width="12" height="12" patternUnits="userSpaceOnUse"><circle cx="6" cy="6" r="1.3" fill="#ffffff22"/></pattern>
+          </defs>
+          <rect width="400" height="320" fill="url(#gw)"/><rect width="400" height="320" fill="url(#dots)"/>
+          <g fill="none" stroke="#ffb15c" stroke-width="2.5" stroke-linecap="round">
+            <path d="M90 110 v70 m-14 -14 l14 14 l14 -14"/><path d="M170 100 v80 m-14 -14 l14 14 l14 -14"/>
+            <path d="M250 110 v70 m-14 -14 l14 14 l14 -14"/><path d="M330 100 v80 m-14 -14 l14 14 l14 -14"/>
+          </g>
+          <rect x="50" y="210" width="300" height="10" rx="5" fill="#ffb15c55"/>
+          <text x="24" y="44" fill="#ffb15c" font-family="Cabinet Grotesk, system-ui, sans-serif" font-weight="800" font-size="22">WARM SIDE</text>
+          <text x="24" y="66" fill="#c9b8a8" font-family="Satoshi, system-ui, sans-serif" font-size="13">Low-emissivity metallized face out · heat reflected back</text>
+        </svg>
+        <span class="face-label" style="color:#ffb15c">☀ Cold-night mode</span>
+      </div>
+    </div>
+    <div class="switch" role="group" aria-label="Sheet mode">
+      <span class="pill" aria-hidden="true"></span>
+      <button data-mode="cool" aria-pressed="true">❄ Cool side</button>
+      <button data-mode="warm" aria-pressed="false">☀ Warm side</button>
+    </div>
+    <p class="hint">Tap the sheet or the switch to flip it</p>
+  </div>
+</div></header>
+
+<section id="sim"><div class="wrap">
+  <div class="sec-head">
+    <div class="eyebrow">Night simulator</div>
+    <h2>Which side tonight?</h2>
+    <p class="muted">Set your bedroom conditions and see which side to use, plus an estimate of how close it gets you to comfortable sleep. These are illustrative numbers based on lab results, not measured product data.</p>
+  </div>
+  <div class="sim">
+    <div class="card">
+      <div class="field">
+        <label for="temp">Bedroom temperature <output id="tempOut">30°C</output></label>
+        <input type="range" id="temp" min="2" max="40" value="30">
+      </div>
+      <div class="field">
+        <label>Humidity</label>
+        <div class="seg" data-group="hum">
+          <button data-v="dry" aria-pressed="false">Dry</button>
+          <button data-v="normal" aria-pressed="true">Normal</button>
+          <button data-v="humid" aria-pressed="false">Humid</button>
+        </div>
+      </div>
+      <div class="field">
+        <label>Other bedding</label>
+        <div class="seg" data-group="bed">
+          <button data-v="none" aria-pressed="true">FlipSleep only</button>
+          <button data-v="light" aria-pressed="false">+ light blanket</button>
+          <button data-v="heavy" aria-pressed="false">+ heavy blanket</button>
+        </div>
+      </div>
+      <div class="field" style="margin-bottom:0">
+        <label for="unit">Units</label>
+        <div class="seg" data-group="unit">
+          <button data-v="c" aria-pressed="true">°C</button>
+          <button data-v="f" aria-pressed="false">°F</button>
+        </div>
+      </div>
+    </div>
+    <div class="card readout" aria-live="polite">
+      <div class="verdict">
+        <div class="icon" id="vIcon" aria-hidden="true">❄</div>
+        <div><h3 id="vTitle">Use the cool side</h3><p class="muted" id="vText">Carbon side facing up.</p></div>
+      </div>
+      <div class="thermo"><canvas id="thermo"></canvas></div>
+      <div class="compare">
+        <div><span>Without sheet</span><b id="cNone">30°C</b><span id="zNone"></span></div>
+        <div class="hl"><span>With FlipSleep</span><b id="cFlip">27°C</b><span id="zFlip"></span></div>
+        <div><span>Wrong side</span><b id="cWrong">33°C</b><span id="zWrong"></span></div>
+      </div>
+      <p class="hint">"Feels like" is the estimated temperature your skin experiences under the sheet. The comfort band for sleep is roughly 18–26°C.</p>
+    </div>
+  </div>
+</div></section>
+
+<section id="research"><div class="wrap">
+  <div class="sec-head">
+    <div class="eyebrow">The science behind it</div>
+    <h2>Stanford's dual-mode textile</h2>
+    <p class="muted">In 2017, Yi Cui's and Shanhui Fan's groups at Stanford showed that one piece of fabric can do both passive radiative heating and cooling with no energy input. You switch modes by turning it inside out (<a href="https://www.ncbi.nlm.nih.gov/pmc/articles/5688747" target="_blank" rel="noopener">Hsu et al., Science Advances 2017</a>). FlipSleep takes that idea from clothing to bedding.</p>
+  </div>
+  <div class="res-grid">
+    <div class="card">
+      <div class="eyebrow">Lab result · artificial skin temperature</div>
+      <p class="muted" style="font-size:var(--text-sm);margin-top:.4rem">The same piece of textile, same thickness and mass, flipped. Tap a bar.</p>
+      <div class="bars" id="bars"></div>
+      <p class="barnote" id="barNote"></p>
+      <p class="cite">Values from the paper's artificial-skin test. The "traditional textile" was a commercial sweatshirt (<a href="https://www.ncbi.nlm.nih.gov/pmc/articles/5688747" target="_blank" rel="noopener">PMC full text</a>).</p>
+    </div>
+    <div class="card">
+      <div class="eyebrow">Key findings</div>
+      <div class="facts" style="margin-top:1rem">
+        <div><b>6.5°C</b><span>skin temperature swing from flipping the same textile</span></div>
+        <div><b>13.9–24.3°C</b><span>comfort zone of the room, 10.4°C wide</span></div>
+        <div><b>14.7°C</b><span>predicted comfort-zone expansion with a larger emissivity contrast</span></div>
+        <div><b>32–36°C</b><span>skin held in range through a 9°C swing in room temperature</span></div>
+      </div>
+      <p class="cite">How it works: a carbon/copper bilayer emitter sits inside infrared-transparent nanoporous polyethylene (nanoPE), the same base material as kitchen wrap. With the carbon side out, body heat radiates away. With the copper side out, radiation drops and heat stays in (<a href="https://engineering.stanford.edu/news/new-textile-can-keep-people-comfortable-whatever-weather" target="_blank" rel="noopener">Stanford Engineering</a>). The emitter is also set at different distances from the skin on each side, which strengthens the effect (<a href="https://www.osti.gov/servlets/purl/1418218" target="_blank" rel="noopener">OSTI</a>).</p>
+    </div>
+  </div>
+  <div class="card" style="margin-top:1.5rem">
+    <div class="eyebrow">From lab to bedroom</div>
+    <div style="overflow-x:auto">
+    <table class="diff">
+      <thead><tr><th></th><th>Stanford lab textile (2017)</th><th>FlipSleep concept</th></tr></thead>
+      <tbody>
+        <tr><td>Form</td><td>Clothing swatch</td><td>Sleep sheet, single and double sizes</td></tr>
+        <tr><td>Low-ε face</td><td>Copper coating</td><td>Vacuum-aluminized film (cheaper, common in packaging)</td></tr>
+        <tr><td>IR-transparent layer</td><td>NanoPE (battery-separator grade)</td><td>Perforated PE film for sweat vapor and lower cost</td></tr>
+        <tr><td>Skin side</td><td>NanoPE</td><td>Cotton gauze, so it feels like normal bedding</td></tr>
+        <tr><td>Status</td><td>Research prototype; Stanford holds patents (see below)</td><td>Concept, which needs a design that avoids those patents or a license</td></tr>
+      </tbody>
+    </table></div>
+    <p class="cite">Related follow-up from the same lab: a bifunctional asymmetric fabric gave a 4.6°C cooling/warming difference using surface roughness plus emissivity (<a href="https://www.engineering.org.cn/engi/EN/PDF/10.1016/j.eng.2021.04.016" target="_blank" rel="noopener">Peng et al., Engineering 2021</a>).</p>
+  </div>
+</div></section>
+
+<section id="layers"><div class="wrap">
+  <div class="sec-head">
+    <div class="eyebrow">How it works</div>
+    <h2>Four layers, under 1 mm</h2>
+    <p class="muted">Based on the dual-mode textile from Stanford's lab (<a href="https://web.stanford.edu/group/fan/publication/Hsu_ScienceAdvances_3_e1700895_2017.pdf" target="_blank" rel="noopener">Hsu et al., Science Advances 2017</a>), adapted to cheap materials that can be made on standard factory roll lines. Tap a layer.</p>
+  </div>
+  <div class="layers">
+    <div class="stack" id="stack"></div>
+    <div class="card layer-info">
+      <h3 id="lTitle"></h3>
+      <p class="muted" id="lText"></p>
+      <ul class="layer-list" id="lList"></ul>
+    </div>
+  </div>
+</div></section>
+
+<section id="patents"><div class="wrap">
+  <div class="sec-head">
+    <div class="eyebrow">Patent landscape</div>
+    <h2>What's already patented</h2>
+    <p class="muted" id="patIntro">Summary of a search covering about 50 patents and applications. Risk: US medium, China high, Europe low. This is a starting point, not legal advice. Get a formal freedom-to-operate opinion before manufacturing.</p>
+  </div>
+  <div class="pat-grid" id="patGrid"></div>
+</div></section>
+
+<section id="order"><div class="wrap">
+  <div class="sec-head">
+    <div class="eyebrow">Reserve a prototype</div>
+    <h2>Pick a size</h2>
+    <p class="muted">Nothing is charged. Reserve a spot and we'll email you once when prototypes are ready. <span id="countLine"></span></p>
+  </div>
+  <div class="order">
+    <div class="card">
+      <div class="field"><label>Size</label>
+        <div class="opt" data-group="size">
+          <button data-v="single" data-p="6" aria-pressed="true">Single<small>$6</small></button>
+          <button data-v="double" data-p="8" aria-pressed="false">Double<small>$8</small></button>
+          <button data-v="travel" data-p="5" aria-pressed="false">Travel<small>$5</small></button>
+        </div>
+      </div>
+      <div class="field"><label>Buyer type</label>
+        <div class="seg" data-group="buyer">
+          <button data-v="home" aria-pressed="true">For my home</button>
+          <button data-v="ngo" aria-pressed="false">NGO / bulk (50+)</button>
+        </div>
+      </div>
+      <div class="field"><label>Quantity</label>
+        <div class="qty"><button id="minus" aria-label="Decrease">−</button><output id="qty">1</output><button id="plus" aria-label="Increase">+</button></div>
+      </div>
+      <div class="total"><span>Total <span class="tag" id="disc"></span></span><b id="total">$6.00</b></div>
+      <button class="btn" id="reserve" style="width:100%;justify-content:center">Reserve now</button>
+    </div>
+    <div class="card impact">
+      <div class="eyebrow">Estimated yearly impact of your order</div>
+      <div class="big" id="kwh">~110 kWh</div>
+      <p class="muted" id="impactText">electricity not used, compared with running a 50 W fan 6 hours a night for a year.</p>
+      <hr style="border:0;border-top:1px solid var(--line)">
+      <p class="muted">Who it's for: the billions of people who sleep without air conditioning or heating, plus anyone who wants a smaller power bill.</p>
+    </div>
+  </div>
+</div></section>
+
+<footer><div class="wrap">FlipSleep is an invention concept and clickable prototype. Performance figures are estimates from published lab research, not tested product data. Not legal advice.</div></footer>
+
+<dialog id="dlg">
+  <form id="dform" novalidate>
+    <h3 id="dTitle">Reserve your FlipSleep</h3>
+    <p class="muted" id="dText">We'll email you when prototypes ship. No payment needed. We only use your email for FlipSleep updates.</p>
+    <input type="email" id="email" placeholder="you@example.com" autocomplete="email">
+    <div class="err" id="err"></div>
+    <div style="display:flex;gap:.5rem;justify-content:flex-end">
+      <button type="button" class="btn ghost" id="cancel">Cancel</button>
+      <button type="submit" class="btn" id="confirm">Confirm</button>
+    </div>
+  </form>
+</dialog>
+<div class="toast" id="toast"></div>
+
+<script>window.__API_BASE__='https://flipsleep.pplx.app/port/8000';</script>
+<script src="patents.js"></script>
+<script>
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const root=document.documentElement;
+const state={mode:'cool',auto:true,temp:30,hum:'normal',bed:'none',unit:'c',size:'single',price:6,buyer:'home',qty:1};
+
+function setMode(m,fromSim){
+  state.mode=m;root.dataset.mode=m;
+  $$('.switch button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.mode===m));
+  $('#heroWord').textContent=m==='cool'?'Flip to cool.':'Flip to warm.';
+  if(!fromSim) state.auto=false;
+  sim();
+}
+$$('.switch button').forEach(b=>b.onclick=()=>setMode(b.dataset.mode));
+const sheet=$('#sheet');
+sheet.onclick=()=>setMode(state.mode==='cool'?'warm':'cool');
+sheet.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();sheet.click()}};
+$$('[data-goto]').forEach(b=>b.onclick=()=>document.getElementById(b.dataset.goto).scrollIntoView({behavior:'smooth'}));
+
+// segmented groups
+$$('[data-group]').forEach(g=>g.addEventListener('click',e=>{
+  const b=e.target.closest('button');if(!b)return;
+  g.querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',x===b));
+  const k=g.dataset.group;state[k]=b.dataset.v;
+  if(k==='size')state.price=+b.dataset.p;
+  if(k==='buyer'){state.qty=state.buyer==='ngo'?Math.max(50,state.qty):1}
+  if(['hum','bed','unit'].includes(k)){state.auto=true}
+  sim();order();
+}));
+
+// simulator
+const fmt=c=>state.unit==='c'?`${Math.round(c)}°C`:`${Math.round(c*9/5+32)}°F`;
+function zone(c){return c<16?['bad','Too cold']:c<18?['warn','Chilly']:c<=26?['ok','Comfortable']:c<=29?['warn','Warm']:['bad','Too hot']}
+function sim(){
+  const t=state.temp;
+  $('#tempOut').textContent=fmt(t);
+  const rec=t>=22?'cool':'warm';
+  if(state.auto && state.mode!==rec){state.mode=rec;root.dataset.mode=rec;$$('.switch button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.mode===rec));$('#heroWord').textContent=rec==='cool'?'Flip to cool.':'Flip to warm.'}
+  const bedAdd={none:0,light:2.5,heavy:5}[state.bed];
+  const humPen={dry:1,normal:.8,humid:.55}[state.hum]; // radiative cooling less effective when humid
+  const coolEff=3*humPen, warmEff=4.5;
+  const base=t+bedAdd;
+  const cool=base-coolEff, warm=base+warmEff;
+  const cur=state.mode==='cool'?cool:warm, wrong=state.mode==='cool'?warm:cool;
+  $('#cNone').textContent=fmt(base);$('#cFlip').textContent=fmt(cur);$('#cWrong').textContent=fmt(wrong);
+  [['#zNone',base],['#zFlip',cur],['#zWrong',wrong]].forEach(([s,v])=>{const[z,l]=zone(v);$(s).innerHTML=`<span class="zone ${z}">${l}</span>`});
+  const match=state.mode===rec;
+  $('#vIcon').textContent=state.mode==='cool'?'❄':'☀';
+  $('#vTitle').textContent=match?`Use the ${rec} side`:`Try flipping to the ${rec} side`;
+  let txt=rec==='cool'?'Dark carbon side facing up, so body heat radiates out into the room.':'Silver metallized side facing up, so body heat reflects back to you.';
+  if(state.hum==='humid'&&rec==='cool')txt+=' High humidity weakens radiative cooling a little.';
+  if(state.bed!=='none'&&rec==='cool')txt+=' Take off the extra blanket for best results.';
+  if(rec==='warm'&&warm<16)txt+=' It is very cold, so layer a blanket on top. FlipSleep boosts it but cannot replace it.';
+  $('#vText').textContent=txt;
+  drawThermo(base,cur);
+}
+$('#temp').oninput=e=>{state.temp=+e.target.value;state.auto=true;sim()};
+
+function drawThermo(a,b){
+  const cv=$('#thermo'),r=cv.getBoundingClientRect(),d=devicePixelRatio||1;
+  cv.width=r.width*d;cv.height=r.height*d;const x=cv.getContext('2d');x.scale(d,d);
+  const W=r.width,H=r.height,min=0,max=45,px=v=>14+(Math.min(max,Math.max(min,v))-min)/(max-min)*(W-28);
+  const g=x.createLinearGradient(14,0,W-14,0);g.addColorStop(0,'#2b8fd6');g.addColorStop(.45,'#2fbf71');g.addColorStop(.62,'#2fbf71');g.addColorStop(1,'#e0662a');
+  x.fillStyle=g;x.globalAlpha=.25;x.fillRect(14,H/2-6,W-28,12);x.globalAlpha=1;
+  x.fillStyle='#2fbf7155';x.fillRect(px(18),H/2-6,px(26)-px(18),12);
+  x.fillStyle='#9aa3bd';x.font='12px Satoshi, system-ui, sans-serif';x.textAlign='center';
+  x.fillText('comfort',(px(18)+px(26))/2,H/2+24);
+  const ac=getComputedStyle(root).getPropertyValue('--accent').trim();
+  x.strokeStyle=ac;x.lineWidth=2;x.setLineDash([4,4]);x.beginPath();x.moveTo(px(a),H/2-22);x.lineTo(px(a),H/2+6);x.stroke();x.setLineDash([]);
+  x.beginPath();x.moveTo(px(a),H/2-16);x.lineTo(px(b),H/2-16);x.stroke();
+  const dir=b<a?-1:1;x.beginPath();x.moveTo(px(b),H/2-16);x.lineTo(px(b)-dir*7,H/2-21);x.lineTo(px(b)-dir*7,H/2-11);x.closePath();x.fillStyle=ac;x.fill();
+  x.fillStyle=ac;x.beginPath();x.arc(px(b),H/2,7,0,7);x.fill();
+  x.fillStyle='#eef1f8';x.fillText('feels like '+fmt(b),px(b),H/2-28<12?12:H/2-28);
+}
+addEventListener('resize',()=>sim());
+
+// layers
+const L=[
+ {n:'Cotton gauze',c:'linear-gradient(135deg,#e9e2d4,#cfc6b4)',fc:'#2a2a2a',t:'Breathable inner layer that touches your skin. Soft, washable, and familiar, so the sheet feels like normal bedding rather than a crinkly emergency blanket.',m:'~0.3 mm · cotton'},
+ {n:'Perforated nanoPE film',c:'linear-gradient(135deg,#dfe8f2aa,#b9c9dbaa)',fc:'#1a2333',t:'Polyethylene lets infrared (body heat) pass through. Laser micro-perforations let sweat vapor escape, which fixes the biggest weakness of Mylar blankets.',m:'~0.03 mm · IR-transparent'},
+ {n:'Carbon emitter',c:'linear-gradient(135deg,#1a1a1a,#3a3a3a)',fc:'#eee',t:'High-emissivity face (ε ≈ 0.9). When it faces out, it radiates body heat away efficiently, which is the cool mode.',m:'~0.01 mm · carbon coating'},
+ {n:'Aluminized face',c:'linear-gradient(135deg,#c9ced6,#f2f4f7,#a6adb8)',fc:'#222',t:'Low-emissivity face (ε ≈ 0.3). When it faces out, it barely radiates, so heat stays with you, which is the warm mode. It is vacuum-metallized on the same roll line.',m:'~0.0001 mm · aluminum'}
+];
+let active=0;
+function renderLayers(){
+  $('#stack').innerHTML=L.map((l,i)=>`<div class="layer ${i===active?'active':''}" data-i="${i}" style="top:${40+i*64-(i===active?18:0)}px;background:${l.c};color:${l.fc};z-index:${10-i}"><span>${l.n}</span></div>`).join('');
+  $('#lList').innerHTML=L.map((l,i)=>`<li><button data-i="${i}" aria-pressed="${i===active}"><span>${i+1}. ${l.n}</span><span class="muted">${l.m}</span></button></li>`).join('');
+  $('#lTitle').textContent=L[active].n;$('#lText').textContent=L[active].t;
+}
+document.addEventListener('click',e=>{const el=e.target.closest('#stack .layer,#lList button');if(el){active=+el.dataset.i;renderLayers()}});
+renderLayers();
+
+// patents (filled from search)
+const PAT=window.PATENTS||[];
+function renderPat(){
+  const g=$('#patGrid');
+  if(!PAT.length){g.innerHTML='<div class="card"><p class="muted">Patent search results are loading into this prototype.</p></div>';return}
+  const col={low:['#2fbf7133','#7ee2a8'],medium:['#ffb15c33','#ffc98a'],high:['#ff5c5c33','#ff9a9a'],opportunity:['#7fd3ff33','#a8e2ff']};
+  g.innerHTML=PAT.map(p=>{const[c1,c2]=col[p.risk]||col.medium;return `<div class="card pat"><span class="risk" style="background:${c1};color:${c2}">${p.label}</span><h3>${p.title}</h3><p>${p.text}</p>${p.url?`<p style="margin-top:.75rem"><a href="${p.url}" target="_blank" rel="noopener">${p.id}</a></p>`:''}</div>`}).join('');
+}
+renderPat();
+
+// order
+function order(){
+  $('#qty').textContent=state.qty;
+  let unit=state.price,label='';
+  if(state.buyer==='ngo'){unit=Math.min(unit,state.size==='double'?4.5:3.5);label='bulk price'}
+  else if(state.qty>=4){unit*=.9;label='10% off 4+'}
+  $('#disc').textContent=label;
+  $('#total').textContent='$'+(unit*state.qty).toFixed(2);
+  const kwh=Math.round(state.qty*0.05*6*365);
+  $('#kwh').textContent='~'+kwh.toLocaleString()+' kWh';
+}
+$('#plus').onclick=()=>{state.qty+=state.buyer==='ngo'?10:1;order()};
+$('#minus').onclick=()=>{const min=state.buyer==='ngo'?50:1;state.qty=Math.max(min,state.qty-(state.buyer==='ngo'?10:1));order()};
+const dlg=$('#dlg');
+$('#reserve').onclick=()=>{$('#err').textContent='';$('#dText').textContent=`${state.qty} × ${state.size} sheet, ${$('#total').textContent}. We'll email you when prototypes ship. No payment needed.`;dlg.showModal();$('#email').focus()};
+$('#cancel').onclick=()=>dlg.close();
+const LOCAL=new Set(['localhost','127.0.0.1','[::1]']);
+const RAW=window.__API_BASE__||'';
+const API=RAW.startsWith('__PORT_')?(LOCAL.has(location.hostname)?'http://localhost:8000':null):RAW.replace(/\/$/,'');
+const SOURCE=/github\.io$/.test(location.hostname)?'github':(/pplx\.app$/.test(location.hostname)?'pplx':'preview');
+async function loadCount(){if(!API)return;try{const r=await fetch(API+'/api/count');const j=await r.json();if(j.signups>0)$('#countLine').textContent=j.signups+(j.signups===1?' person has':' people have')+' reserved so far.'}catch(e){}}
+$('#dform').onsubmit=async e=>{
+  e.preventDefault();
+  const v=$('#email').value.trim();
+  if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v)){$('#err').textContent='Please enter a valid email address.';return}
+  if(!API){$('#err').textContent='Reservations are not available in this preview.';return}
+  const btn=$('#confirm');btn.disabled=true;btn.textContent='Saving…';
+  try{
+    const r=await fetch(API+'/api/reserve',{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({email:v,size:state.size,qty:state.qty,buyer:state.buyer,total:$('#total').textContent,source:SOURCE})});
+    const j=await r.json().catch(()=>({}));
+    if(!r.ok){$('#err').textContent=j.error||'Something went wrong. Please try again.';return}
+    dlg.close();$('#email').value='';toast('Reserved. We will email you when prototypes are ready.');loadCount();
+  }catch(err){$('#err').textContent='Could not reach the server. Please try again.'}
+  finally{btn.disabled=false;btn.textContent='Confirm'}
+};
+loadCount();
+function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2800)}
+
+
+// research bars
+const BARS=[
+ {n:'Bare skin',v:31.0,c:'#9aa3bd',t:'Bare skin with no covering measured 31.0°C. This is the baseline.'},
+ {n:'Dual-mode, cool side',v:33.8,c:'#7fd3ff',t:'Carbon (high-emissivity) side out: 33.8°C. That is 3.1°C cooler than the sweatshirt, because body heat radiates through the nanoPE.'},
+ {n:'Sweatshirt',v:36.9,c:'#c9b8a8',t:'A commercial sweatshirt raised skin temperature to 36.9°C by trapping infrared heat.'},
+ {n:'Dual-mode, warm side',v:40.3,c:'#ffb15c',t:'Copper (low-emissivity) side out: 40.3°C, which is 6.5°C warmer than the cool side with the same piece of fabric.'}
+];
+let barSel=1;
+function renderBars(animate){
+  $('#bars').innerHTML=BARS.map((b,i)=>`<div class="bar" role="button" tabindex="0" data-i="${i}" aria-pressed="${i===barSel}"><span>${b.n}</span><div class="track"><div class="fill" style="background:${b.c};width:${animate?0:((b.v-28)/(42-28)*100)}%"></div></div><b>${b.v.toFixed(1)}°</b></div>`).join('');
+  $('#barNote').textContent=BARS[barSel].t;
+  if(animate)requestAnimationFrame(()=>requestAnimationFrame(()=>$$('#bars .fill').forEach((f,i)=>f.style.width=((BARS[i].v-28)/(42-28)*100)+'%')));
+}
+$('#bars').addEventListener('click',e=>{const b=e.target.closest('.bar');if(b){barSel=+b.dataset.i;renderBars(false)}});
+$('#bars').addEventListener('keydown',e=>{const b=e.target.closest('.bar');if(b&&(e.key==='Enter'||e.key===' ')){e.preventDefault();b.click()}});
+renderBars(false);
+const io=new IntersectionObserver(es=>{es.forEach(en=>{if(en.isIntersecting){renderBars(true);io.disconnect()}})},{threshold:.3});
+io.observe($('#bars'));
+sim();order();
+</script>
+</body>
+</html>
